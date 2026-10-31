@@ -67,6 +67,7 @@ dd a{color:var(--brand);font-weight:600}
 .btn.primary{background:var(--brand);color:var(--brand-ink)}
 .btn:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
 .btn.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.acc{color:var(--muted);font-size:.85rem}
 .phone{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .phone span{font-weight:600}
 .btn.call{flex:0 0 auto;min-height:40px;padding:8px 18px;background:var(--ok);border-color:var(--ok);color:#fff}
@@ -81,12 +82,12 @@ footer{margin-top:28px;font-size:.78rem;color:var(--muted);text-align:center}
 <div class="wrap">
   <header>
     <h1>Tra cứu trạm BTS – Cần Thơ</h1>
-    <p>Gõ mã trạm, địa chỉ, tên quản lý hoặc địa bàn. Không cần gõ dấu.</p>
+    <p>Gõ mã trạm, địa chỉ, tên quản lý, số điện thoại hoặc địa bàn. Không cần gõ dấu.</p>
   </header>
 
   <div class="panel">
     <div class="search" id="searchBox">
-      <input id="q" type="search" inputmode="search" autocomplete="off" placeholder="Ví dụ: CTO0001, an thoi, tiendv5" aria-label="Tìm trạm">
+      <input id="q" type="search" inputmode="search" autocomplete="off" placeholder="Ví dụ: CTO0001, an thoi, tên FT" aria-label="Tìm trạm">
       <button id="clear" type="button" aria-label="Xóa nội dung tìm">×</button>
     </div>
     <div class="filters">
@@ -116,8 +117,8 @@ footer{margin-top:28px;font-size:.78rem;color:var(--muted);text-align:center}
 <script>
 /* ============================================================
    DANH BẠ SỐ ĐIỆN THOẠI QUẢN LÝ
-   File Excel hiện chưa có số điện thoại (cột "Số DT" trống).
-   Điền số vào đây theo mẫu, trang sẽ tự hiển thị và gọi được:
+   Số điện thoại đã lấy tự động từ Sheet1 (danh bạ FT) trong data.js.
+   Chỉ dùng mục này để bổ sung số cho người chưa có trong danh bạ:
      'tiendv5': '0912345678',
    ============================================================ */
 const PHONE_BOOK = {
@@ -133,7 +134,7 @@ const norm = s => (s || '').toString().toLowerCase()
 // Chuẩn bị dữ liệu tìm kiếm
 STATIONS.forEach(s => {
   s.phone = s.s || PHONE_BOOK[s.q] || '';
-  s._k = norm([s.m, s.d, s.q, s.b, s.phone].join(' '));
+  s._k = norm([s.m, s.d, s.q, s.qn, s.b, s.phone].join(' '));
   s._m = norm(s.m);
 });
 
@@ -200,7 +201,7 @@ function cardHTML(s){
       <dt>Địa chỉ</dt>
       ${s.d ? `<dd>${esc(s.d)}</dd>` : `<dd class="empty">Chưa có địa chỉ</dd>`}
       <dt>Quản lý</dt>
-      ${s.q ? `<dd>${esc(s.q)}</dd>` : `<dd class="empty">Chưa có người quản lý</dd>`}
+      ${s.q ? `<dd><strong>${esc(s.qn || s.q)}</strong>${s.qn ? ` <span class="acc">(${esc(s.q)})</span>` : ''}${s.u ? `<br><span class="acc">${esc(s.u.trim())}</span>` : ''}</dd>` : `<dd class="empty">Chưa có người quản lý</dd>`}
       <dt>Điện thoại</dt>
       ${phone}
       ${extra ? `<dt>Loại nhà</dt><dd>${esc(extra)}</dd>` : ''}
