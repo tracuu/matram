@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tra cứu trạm BTS – Cần Thơ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef2f5; --surface:#ffffff; --ink:#14222e; --muted:#5b6b78; --line:#d6dee5;
+  --brand:#0b5a73; --brand-ink:#ffffff; --brand-soft:#dcedf2;
+  --roof:#b45309; --roof-soft:#fdeccf; --ground:#2f6b3a; --ground-soft:#dff0e1; --unk:#5b6b78; --unk-soft:#e6ebef;
+  --ok:#1f7a3d; --warn:#b45309; --bad:#a32222;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1a22; --surface:#17252f; --ink:#e6eef3; --muted:#9db0bd; --line:#2a3b47;
+    --brand:#4fb3d0; --brand-ink:#07202a; --brand-soft:#1c3945;
+    --roof:#f0a654; --roof-soft:#3d2c14; --ground:#7fcf8e; --ground-soft:#1a3a22; --unk:#9db0bd; --unk-soft:#25343f;
+    --ok:#6fd08c; --warn:#f0a654; --bad:#ef8a8a;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:0 14px 40px}
+header{padding:20px 0 6px}
+h1{margin:0;font-size:1.35rem;font-weight:700;letter-spacing:-.01em}
+header p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+
+.panel{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 10px;border-bottom:1px solid var(--line)}
+.search{position:relative}
+.search input{width:100%;font:inherit;padding:13px 44px 13px 14px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.search input:focus{outline:none;border-color:var(--brand)}
+.search button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font-size:1.4rem;line-height:1;width:36px;height:36px;border-radius:8px;cursor:pointer;display:none}
+.search.has button{display:block}
+.filters{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.filters select{flex:1 1 150px;font:inherit;font-size:.9rem;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0}
+.count{margin:10px 0 0;font-size:.85rem;color:var(--muted)}
+
+.list{display:grid;gap:12px;margin-top:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.code{font-size:1.2rem;font-weight:700;letter-spacing:.01em;word-break:break-all}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.badge{font-size:.78rem;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.b-roof{background:var(--roof-soft);color:var(--roof)}
+.b-ground{background:var(--ground-soft);color:var(--ground)}
+.b-unk{background:var(--unk-soft);color:var(--unk)}
+.status{font-size:.8rem;font-weight:600;white-space:nowrap;padding-top:4px}
+.s-ok{color:var(--ok)} .s-warn{color:var(--warn)} .s-bad{color:var(--bad)} .s-unk{color:var(--muted)}
+
+dl{margin:12px 0 0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.93rem}
+dt{color:var(--muted)}
+dd{margin:0;min-width:0;word-wrap:break-word}
+dd.empty{color:var(--muted);font-style:italic}
+dd a{color:var(--brand);font-weight:600}
+
+.loc{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.coord{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.coord code{font:600 .95rem ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--brand-soft);color:var(--ink);padding:7px 10px;border-radius:8px;user-select:all;word-break:break-all}
+.coord small{color:var(--muted);font-size:.78rem;flex-basis:100%}
+.actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{font:inherit;font-size:.9rem;font-weight:600;padding:10px 14px;border-radius:9px;border:1px solid var(--brand);background:var(--surface);color:var(--brand);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;flex:1 1 140px}
+.btn.primary{background:var(--brand);color:var(--brand-ink)}
+.btn:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.btn.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.phone{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.phone span{font-weight:600}
+.btn.call{flex:0 0 auto;min-height:40px;padding:8px 18px;background:var(--ok);border-color:var(--ok);color:#fff}
+.nocoord{color:var(--bad);font-size:.9rem}
+
+.more{display:block;margin:16px auto 0;width:100%;max-width:320px}
+.empty-state{text-align:center;color:var(--muted);padding:40px 10px}
+footer{margin-top:28px;font-size:.78rem;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Tra cứu trạm BTS – Cần Thơ</h1>
+    <p>Gõ mã trạm, địa chỉ, tên quản lý hoặc địa bàn. Không cần gõ dấu.</p>
+  </header>
+
+  <div class="panel">
+    <div class="search" id="searchBox">
+      <input id="q" type="search" inputmode="search" autocomplete="off" placeholder="Ví dụ: CTO0001, an thoi, tiendv5" aria-label="Tìm trạm">
+      <button id="clear" type="button" aria-label="Xóa nội dung tìm">×</button>
+    </div>
+    <div class="filters">
+      <select id="fVitri" aria-label="Lọc theo loại trạm">
+        <option value="">Trên mái và dưới đất</option>
+        <option value="Trạm trên mái">Trạm trên mái</option>
+        <option value="Trạm dưới đất">Trạm dưới đất</option>
+        <option value="__none">Chưa xác định</option>
+      </select>
+      <select id="fTT" aria-label="Lọc theo trạng thái">
+        <option value="">Mọi trạng thái</option>
+      </select>
+      <select id="fBan" aria-label="Lọc theo địa bàn">
+        <option value="">Mọi địa bàn</option>
+      </select>
+    </div>
+    <p class="count" id="count" aria-live="polite"></p>
+  </div>
+
+  <main class="list" id="list"></main>
+  <button class="btn more" id="more" type="button" hidden>Hiển thị thêm</button>
+
+  <footer>Dữ liệu xuất từ hệ thống ngày 21/08/2025.</footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+/* ============================================================
+   DANH BẠ SỐ ĐIỆN THOẠI QUẢN LÝ
+   File Excel hiện chưa có số điện thoại (cột "Số DT" trống).
+   Điền số vào đây theo mẫu, trang sẽ tự hiển thị và gọi được:
+     'tiendv5': '0912345678',
+   ============================================================ */
+const PHONE_BOOK = {
+  // 'tiendv5': '0912345678',
+};
+
+const PAGE = 40;
+const $ = id => document.getElementById(id);
+
+const norm = s => (s || '').toString().toLowerCase()
+  .replace(/đ/g, 'd').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+// Chuẩn bị dữ liệu tìm kiếm
+STATIONS.forEach(s => {
+  s.phone = s.s || PHONE_BOOK[s.q] || '';
+  s._k = norm([s.m, s.d, s.q, s.b, s.phone].join(' '));
+  s._m = norm(s.m);
+});
+
+// Đổ giá trị cho bộ lọc
+function fillSelect(sel, values){
+  [...new Set(values.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi')).forEach(v=>{
+    const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o);
+  });
+}
+fillSelect($('fTT'), STATIONS.map(s => s.t));
+fillSelect($('fBan'), STATIONS.map(s => s.b));
+
+let result = [], shown = 0;
+
+function filter(){
+  const terms = norm($('q').value).split(/\s+/).filter(Boolean);
+  const vt = $('fVitri').value, tt = $('fTT').value, ban = $('fBan').value;
+  result = STATIONS.filter(s => {
+    if (vt === '__none' ? s.v : (vt && s.v !== vt)) return false;
+    if (tt && s.t !== tt) return false;
+    if (ban && s.b !== ban) return false;
+    return terms.every(t => s._k.includes(t));
+  });
+  // Ưu tiên mã trạm khớp đầu chuỗi
+  if (terms.length){
+    const t0 = terms[0];
+    result.sort((a,b) => (b._m.startsWith(t0) - a._m.startsWith(t0)) || (a._m === t0 ? -1 : b._m === t0 ? 1 : 0));
+  }
+  shown = 0;
+  $('list').innerHTML = '';
+  render();
+}
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function statusClass(t){
+  if (t === 'Đang hoạt động') return 's-ok';
+  if (t === 'Hủy') return 's-bad';
+  if (!t) return 's-unk';
+  return 's-warn';
+}
+
+function cardHTML(s){
+  const vClass = s.v === 'Trạm trên mái' ? 'b-roof' : s.v === 'Trạm dưới đất' ? 'b-ground' : 'b-unk';
+  const vText = s.v || 'Chưa xác định loại trạm';
+  const hasXY = s.la && s.lo;
+  const xy = hasXY ? `${s.la}, ${s.lo}` : '';
+  const maps = hasXY ? `https://www.google.com/maps/search/?api=1&query=${s.la},${s.lo}` : '';
+  const dir = hasXY ? `https://www.google.com/maps/dir/?api=1&destination=${s.la},${s.lo}` : '';
+  const phone = s.phone
+    ? `<dd class="phone"><span>${esc(s.phone)}</span><a class="btn call" href="tel:${esc(s.phone.replace(/[^\d+]/g,''))}" aria-label="Gọi ${esc(s.q || s.phone)}">Gọi</a></dd>`
+    : `<dd class="empty">Chưa có số điện thoại</dd>`;
+  const extra = [s.n, s.l].filter(Boolean).join(' · ');
+  return `
+  <article class="card">
+    <div class="top">
+      <div>
+        <div class="code">${esc(s.m)}</div>
+        <div class="badges"><span class="badge ${vClass}">${esc(vText)}</span></div>
+      </div>
+      <div class="status ${statusClass(s.t)}">${esc(s.t || 'Chưa rõ trạng thái')}</div>
+    </div>
+    <dl>
+      <dt>Địa chỉ</dt>
+      ${s.d ? `<dd>${esc(s.d)}</dd>` : `<dd class="empty">Chưa có địa chỉ</dd>`}
+      <dt>Quản lý</dt>
+      ${s.q ? `<dd>${esc(s.q)}</dd>` : `<dd class="empty">Chưa có người quản lý</dd>`}
+      <dt>Điện thoại</dt>
+      ${phone}
+      ${extra ? `<dt>Loại nhà</dt><dd>${esc(extra)}</dd>` : ''}
+      ${s.b ? `<dt>Địa bàn</dt><dd>${esc(s.b)}</dd>` : ''}
+    </dl>
+    <div class="loc">
+      ${hasXY ? `
+      <div class="coord">
+        <code>${esc(xy)}</code>
+        <small>Vĩ độ, kinh độ. Dán thẳng vào ô tìm kiếm của Google Maps.</small>
+      </div>
+      <div class="actions">
+        <button class="btn" type="button" data-copy="${esc(xy)}">Sao chép tọa độ</button>
+        <a class="btn primary" href="${maps}" target="_blank" rel="noopener">Mở Google Maps</a>
+        <a class="btn" href="${dir}" target="_blank" rel="noopener">Chỉ đường</a>
+      </div>` : `<div class="nocoord">Trạm này chưa có tọa độ hợp lệ trong dữ liệu.</div>`}
+    </div>
+  </article>`;
+}
+
+function render(){
+  const next = result.slice(shown, shown + PAGE);
+  $('list').insertAdjacentHTML('beforeend', next.map(cardHTML).join(''));
+  shown += next.length;
+  $('more').hidden = shown >= result.length;
+  $('more').textContent = `Hiển thị thêm (còn ${result.length - shown})`;
+  $('count').textContent = result.length
+    ? `${result.length} trạm${shown < result.length ? ` · đang hiện ${shown}` : ''}`
+    : '';
+  if (!result.length){
+    $('list').innerHTML = '<div class="empty-state">Không tìm thấy trạm nào. Thử bớt từ khóa hoặc bỏ bộ lọc.</div>';
+    $('count').textContent = '0 trạm';
+  }
+}
+
+// Sao chép tọa độ
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch(e){
+    const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch(_){}
+    ta.remove(); return ok;
+  }
+}
+$('list').addEventListener('click', async e => {
+  const b = e.target.closest('[data-copy]'); if (!b) return;
+  const ok = await copyText(b.dataset.copy);
+  const old = b.textContent;
+  b.textContent = ok ? 'Đã sao chép' : 'Không sao chép được, hãy chọn và copy tay';
+  b.classList.toggle('done', ok);
+  setTimeout(() => { b.textContent = old; b.classList.remove('done'); }, 1800);
+});
+
+// Sự kiện
+let timer;
+$('q').addEventListener('input', () => {
+  $('searchBox').classList.toggle('has', !!$('q').value);
+  clearTimeout(timer); timer = setTimeout(filter, 150);
+});
+$('clear').addEventListener('click', () => { $('q').value = ''; $('searchBox').classList.remove('has'); filter(); $('q').focus(); });
+['fVitri','fTT','fBan'].forEach(id => $(id).addEventListener('change', filter));
+$('more').addEventListener('click', render);
+
+filter();
+</script>
+</body>
+</html>
