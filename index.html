@@ -183,7 +183,6 @@ function cardHTML(s){
   const hasXY = s.la && s.lo;
   const xy = hasXY ? `${s.la}, ${s.lo}` : '';
   const maps = hasXY ? `https://www.google.com/maps/search/?api=1&query=${s.la},${s.lo}` : '';
-  const dir = hasXY ? `https://www.google.com/maps/dir/?api=1&destination=${s.la},${s.lo}` : '';
   const phone = s.phone
     ? `<dd class="phone"><span>${esc(s.phone)}</span><a class="btn call" href="tel:${esc(s.phone.replace(/[^\d+]/g,''))}" aria-label="Gọi ${esc(s.q || s.phone)}">Gọi</a></dd>`
     : `<dd class="empty">Chưa có số điện thoại</dd>`;
@@ -216,7 +215,6 @@ function cardHTML(s){
       <div class="actions">
         <button class="btn" type="button" data-copy="${esc(xy)}">Sao chép tọa độ</button>
         <a class="btn primary" href="${maps}" target="_blank" rel="noopener">Mở Google Maps</a>
-        <a class="btn" href="${dir}" target="_blank" rel="noopener">Chỉ đường</a>
       </div>` : `<div class="nocoord">Trạm này chưa có tọa độ hợp lệ trong dữ liệu.</div>`}
     </div>
   </article>`;
